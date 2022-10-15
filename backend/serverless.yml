@@ -123,9 +123,14 @@ functions:
         Action:
           - dynamodb:UpdateItem
           - dynamodb:GetItem
-        Resource: !GetAtt TodosTable.Arn
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+        Resource:
+          - '*'
 
-  # TODO: Configure this function
+
   # Provide property for setting up CORS, Authorizer, iamRoleStatements
   DeleteTodo:
     handler: src/lambda/http/deleteTodo.handler
@@ -139,7 +144,12 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:DeleteItem
-        Resource: !GetAtt TodosTable.Arn
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+        Resource:
+          - '*'
 
 
   # Provide property for setting up CORS, Authorizer, iamRoleStatements
@@ -156,12 +166,13 @@ functions:
         Action:
           - s3:PutObject
           - s3:GetObject
+          - xray:PutTraceSegments
         Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
       - Effect: Allow
         Action:
           - dynamodb:UpdateItem
           - dynamodb:Query
-        Resource: !GetAtt TodosTable.Arn
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
 resources:
   Resources:
